@@ -17,7 +17,7 @@ function App() {
   return (
     <AppContext.Provider
       value={{
-        data: bookData,
+        bookData: bookData,
         setBookData,
         currentChapter: chapter,
         setCurrentChapter: setChapter,

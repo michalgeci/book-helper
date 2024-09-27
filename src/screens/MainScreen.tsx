@@ -3,24 +3,86 @@ import { LoadFileButton } from "../components/LoadFileButton";
 import { bookModelSchema } from "../models/BookModel";
 import { AppContext } from "../context/AppContext";
 import "./MainScreen.css";
+import { ParagraphView } from "../components/ParagraphView";
+import { useBookData } from "../hooks/useBookData";
+import { Spacer } from "../components/Spacer";
 
 export const MainScreen: React.FC = () => {
   const {
-    data,
-    setBookData,
     currentChapter,
     setCurrentChapter,
     currentParagraph,
     setCurrentParagraph,
   } = useContext(AppContext);
 
-  const chapterCount = data.chapters.length;
+  const { bookData, setBookData } = useBookData();
+
+  const chapterCount = bookData.chapters.length;
+
   const paragraphsCount =
-    data.chapters.at(currentChapter)?.originalParagraphs.length ?? 0;
+    bookData.chapters.at(currentChapter)?.originalParagraphs.length ?? 0;
+
+  const getOriginalParagraph = () =>
+    bookData.chapters
+      .at(currentChapter)
+      ?.originalParagraphs.at(currentParagraph);
+
+  const getTranslatedParagraphs = () =>
+    bookData.chapters.at(currentChapter)?.translatedParagraphs;
+
+  const NextChapterButton = () => (
+    <button
+      onClick={() => {
+        if (currentChapter < chapterCount - 1) {
+          setCurrentChapter(currentChapter + 1);
+          setCurrentParagraph(0);
+        }
+      }}
+    >
+      NEXT CHAPTER
+    </button>
+  );
+
+  const PreviousChapterButton = () => (
+    <button
+      onClick={() => {
+        if (currentChapter > 0) {
+          setCurrentChapter(currentChapter - 1);
+          setCurrentParagraph(0);
+        }
+      }}
+    >
+      PREVIOUS CHAPTER
+    </button>
+  );
+
+  const NextParagraphButton = () => (
+    <button
+      onClick={() => {
+        if (currentParagraph < paragraphsCount - 1) {
+          setCurrentParagraph(currentParagraph + 1);
+        }
+      }}
+    >
+      NEXT PARAGRAPH
+    </button>
+  );
+
+  const PreviousParagraphButton = () => (
+    <button
+      onClick={() => {
+        if (currentParagraph > 0) {
+          setCurrentParagraph(currentParagraph - 1);
+        }
+      }}
+    >
+      PREVIOUS PARAGRAPH
+    </button>
+  );
 
   return (
     <div className="full-screen">
-      <div className="row">
+      <div className="row header">
         <LoadFileButton
           title="Open JSON"
           fileSchema={bookModelSchema}
@@ -29,67 +91,32 @@ export const MainScreen: React.FC = () => {
           }}
         />
 
-        <button
-          onClick={() => {
-            if (currentChapter > 0) {
-              setCurrentChapter(currentChapter - 1);
-              setCurrentParagraph(0);
-            }
-          }}
-        >
-          PREVIOUS CHAPTER
-        </button>
+        <Spacer />
 
-        <button
-          onClick={() => {
-            if (currentChapter < chapterCount - 1) {
-              setCurrentChapter(currentChapter + 1);
-              setCurrentParagraph(0);
-            }
-          }}
-        >
-          NEXT CHAPTER
-        </button>
+        <PreviousChapterButton/>
+        <NextChapterButton/>
 
         {`${currentChapter + 1}/${chapterCount}`}
 
-        <button
-          onClick={() => {
-            if (currentParagraph > 0) {
-              setCurrentParagraph(currentParagraph - 1);
-            }
-          }}
-        >
-          PREVIOUS PARAGRAPH
-        </button>
+        <Spacer />
 
-        <button
-          onClick={() => {
-            if (currentParagraph < paragraphsCount - 1) {
-              setCurrentParagraph(currentParagraph + 1);
-            }
-          }}
-        >
-          NEXT PARAGRAPH
-        </button>
+        <PreviousParagraphButton/>
+        <NextParagraphButton/>
 
         {`${currentParagraph + 1}/${paragraphsCount}`}
+        <Spacer />
       </div>
 
       <div className="content">
         <div className="column">
-          {data.chapters
-            .at(currentChapter)
-            ?.originalParagraphs.at(currentParagraph)}
+          {<ParagraphView text={getOriginalParagraph() ?? ""} />}
         </div>
 
         <div className="column">
           <div className="half-fill" />
-          {data.chapters
-            .at(currentChapter)
-            ?.translatedParagraphs?.map((value) => (
-              <div>{value.at(currentParagraph)}</div>
-            ))}
+          {getTranslatedParagraphs()?.map((value) => (
+            <ParagraphView text={value.at(currentParagraph) ?? ""} />
+          ))}
           <div className="half-fill" />
         </div>
 

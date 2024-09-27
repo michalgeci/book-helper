@@ -1,0 +1,11 @@
+p {
+  margin-block-start: 0px;
+  margin-block-end: 12px;
+}
+
+.card {
+  background-color: white;
+  margin: 8px;
+  padding: 8px;
+  border-radius: 8px;
+}

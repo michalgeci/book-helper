@@ -12,10 +12,10 @@
   border-color: gray;
   border-width: 1px;
   border-style: solid;
-  padding: 16px;
   gap: 16px;
   overflow-y: scroll;
   margin: 0 auto;
+  background-color: #CFD8DC;
   /* justify-content: center; */
 }
 .column::before,
@@ -32,4 +32,11 @@
 .row {
   display: flex;
   flex-direction: row;
+}
+
+.header {
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
