@@ -7,6 +7,7 @@ import { ParagraphView } from "../components/ParagraphView";
 import { useBookData } from "../hooks/useBookData";
 import { Spacer } from "../components/Spacer";
 import { download } from "../utils/download";
+import { simpleBookModelSchema } from "../models/SimpleBookModel";
 
 export const MainScreen: React.FC = () => {
   const {
@@ -17,6 +18,7 @@ export const MainScreen: React.FC = () => {
     resultTexts,
     initResultTexts,
     setResultTexts,
+    setResultTestsFull,
   } = useContext(AppContext);
 
   const { bookData, setBookData } = useBookData();
@@ -85,10 +87,39 @@ export const MainScreen: React.FC = () => {
   );
 
   const SaveButton = () => (
-    <button onClick={() => {
-      download(JSON.stringify(resultTexts), `${bookData.author}-${bookData.title}-edit.json`)
-    }}>SAVE TO JSON</button>
-  )
+    <button
+      onClick={() => {
+        if (bookData.chapters.length) {
+          download(
+            JSON.stringify(resultTexts),
+            `${bookData.author}-${bookData.title}-edit.json`
+          );
+        } else {
+          alert("Load book JSON first");
+        }
+      }}
+    >
+      SAVE TO JSON
+    </button>
+  );
+
+  const LoadButton = () => (
+    <LoadFileButton
+      fileSchema={simpleBookModelSchema}
+      title="LOAD PROGRESS"
+      hideFilename
+      preventDefault={
+        bookData.chapters.length
+          ? undefined
+          : () => {
+              alert("Load book JSON first");
+            }
+      }
+      onSuccess={(data) => {
+        setResultTestsFull(data);
+      }}
+    />
+  );
 
   return (
     <div className="full-screen">
@@ -120,6 +151,7 @@ export const MainScreen: React.FC = () => {
         {`${currentParagraph + 1}/${paragraphsCount}`}
         <Spacer />
 
+        <LoadButton />
         <SaveButton />
       </div>
 
@@ -140,8 +172,7 @@ export const MainScreen: React.FC = () => {
           <textarea
             className="result-text-area"
             onChange={(e) => {
-              console.log(e.target.value);
-              setResultTexts(currentChapter, currentParagraph, e.target.value)
+              setResultTexts(currentChapter, currentParagraph, e.target.value);
             }}
             value={resultTexts.at(currentChapter)?.at(currentParagraph)}
           ></textarea>

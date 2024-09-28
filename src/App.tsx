@@ -41,6 +41,7 @@ function App() {
             return nextState;
           });
         },
+        setResultTestsFull: setResultTexts,
         currentChapter: chapter,
         setCurrentChapter: setChapter,
         currentParagraph: paragraph,

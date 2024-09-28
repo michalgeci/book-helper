@@ -1,19 +1,21 @@
 import React, { ReactElement, useRef, useState } from "react";
-import { SomeZodObject, z } from "zod";
+import { z, ZodSchema } from "zod";
 import "./LoadFileButton.css";
 
-export type LoadFileButtonProps<T extends SomeZodObject> = {
+export type LoadFileButtonProps<T extends ZodSchema> = {
   fileSchema: T;
   onSuccess: (data: z.infer<T>) => void;
   title: string;
   hideFilename?: boolean;
+  preventDefault?: () => void;
 };
 
-export function LoadFileButton<T extends SomeZodObject>({
+export function LoadFileButton<T extends ZodSchema>({
   fileSchema,
   onSuccess,
   title,
   hideFilename,
+  preventDefault,
 }: LoadFileButtonProps<T>): ReactElement {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [filename, setFilename] = useState("");
@@ -33,7 +35,6 @@ export function LoadFileButton<T extends SomeZodObject>({
       // const parseResult = bookModelSchema.safeParse(JSON.parse(raw_data));
       const parseResult = fileSchema.safeParse(JSON.parse(raw_data));
       if (parseResult.success) {
-        console.log("good");
         onSuccess(parseResult.data);
       } else {
         setFilename(`Wrong file selected.`);
@@ -56,7 +57,13 @@ export function LoadFileButton<T extends SomeZodObject>({
         }}
         style={{ display: "none" }}
       />
-      <button onClick={onOpenFile}>{title}</button>
+      <button onClick={() => {
+        if (preventDefault) {
+          preventDefault();
+        } else {
+          onOpenFile();
+        }
+      }}>{title}</button>
       {!hideFilename && <div>{filename}</div>}
     </div>
   );

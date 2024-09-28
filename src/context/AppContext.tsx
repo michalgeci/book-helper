@@ -8,6 +8,7 @@ export type AppContextData = {
   resultTexts: SimpleBookModel,
   initResultTexts: (book: BookModel) => void;
   setResultTexts: (chapter: number, paragraph: number, text: string) => void,
+  setResultTestsFull: (progress: SimpleBookModel) => void,
   currentChapter: number,
   setCurrentChapter: (chapter: number) => void,
   currentParagraph: number,
@@ -25,6 +26,7 @@ export const AppContext = createContext<AppContextData>({
   resultTexts: [],
   initResultTexts: () => {},
   setResultTexts: () => {},
+  setResultTestsFull: () => {},
   currentChapter: 0,
   setCurrentChapter: () => {},
   currentParagraph: 0,
