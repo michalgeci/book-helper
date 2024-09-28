@@ -6,6 +6,7 @@ import "./MainScreen.css";
 import { ParagraphView } from "../components/ParagraphView";
 import { useBookData } from "../hooks/useBookData";
 import { Spacer } from "../components/Spacer";
+import { download } from "../utils/download";
 
 export const MainScreen: React.FC = () => {
   const {
@@ -13,6 +14,9 @@ export const MainScreen: React.FC = () => {
     setCurrentChapter,
     currentParagraph,
     setCurrentParagraph,
+    resultTexts,
+    initResultTexts,
+    setResultTexts,
   } = useContext(AppContext);
 
   const { bookData, setBookData } = useBookData();
@@ -80,6 +84,12 @@ export const MainScreen: React.FC = () => {
     </button>
   );
 
+  const SaveButton = () => (
+    <button onClick={() => {
+      download(JSON.stringify(resultTexts), `${bookData.author}-${bookData.title}-edit.json`)
+    }}>SAVE TO JSON</button>
+  )
+
   return (
     <div className="full-screen">
       <div className="row header">
@@ -88,23 +98,29 @@ export const MainScreen: React.FC = () => {
           fileSchema={bookModelSchema}
           onSuccess={(data) => {
             setBookData(data);
+
+            if (resultTexts.length === 0) {
+              initResultTexts(data);
+            }
           }}
         />
 
         <Spacer />
 
-        <PreviousChapterButton/>
-        <NextChapterButton/>
+        <PreviousChapterButton />
+        <NextChapterButton />
 
         {`${currentChapter + 1}/${chapterCount}`}
 
         <Spacer />
 
-        <PreviousParagraphButton/>
-        <NextParagraphButton/>
+        <PreviousParagraphButton />
+        <NextParagraphButton />
 
         {`${currentParagraph + 1}/${paragraphsCount}`}
         <Spacer />
+
+        <SaveButton />
       </div>
 
       <div className="content">
@@ -120,7 +136,16 @@ export const MainScreen: React.FC = () => {
           <div className="half-fill" />
         </div>
 
-        <div className="column"></div>
+        <div className="result-column">
+          <textarea
+            className="result-text-area"
+            onChange={(e) => {
+              console.log(e.target.value);
+              setResultTexts(currentChapter, currentParagraph, e.target.value)
+            }}
+            value={resultTexts.at(currentChapter)?.at(currentParagraph)}
+          ></textarea>
+        </div>
       </div>
     </div>
   );

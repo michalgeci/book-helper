@@ -39,3 +39,20 @@
   flex-direction: row;
   gap: 8px;
 }
+
+.result-column {
+  display: flex;
+  flex: 1;
+  margin: 0 auto;
+  background-color: #CFD8DC;
+  overflow: hidden;
+}
+
+.result-text-area {
+  resize: none;
+  margin: 8px;
+  flex: 1;
+  border-width: 0px;
+  padding: 8px;
+  border-radius: 8px;
+}
