@@ -16,7 +16,6 @@
   overflow-y: scroll;
   margin: 0 auto;
   background-color: #CFD8DC;
-  /* justify-content: center; */
 }
 .column::before,
 .column::after {
